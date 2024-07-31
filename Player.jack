@@ -1,0 +1,122 @@
+class Player {
+    field Array hand;
+    field Array aceIndexes;
+    field int score;
+    field int blackJack;
+
+    constructor Player new() {
+        let hand = Array.new(11);
+        let aceIndexes = Array.new(4);
+
+        do deal();
+        return this;
+    }
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method boolean getBlackJack() {
+        return blackJack;
+    }
+
+    method Array getHand() {
+        return hand;
+    }
+
+    method void fixRoyals() {
+        var int i;
+        let i = 0;
+
+        while (i < 11) {
+            if ((hand[i] = 12) | (hand[i] = 13)) {
+                let hand[i] = 10;
+            }
+            let i = i + 1;
+        }
+        
+        return;
+    }
+
+    method void deal() {
+        do addCard();
+        do addCard();
+
+        if ((hand[0] = 1 & hand[1] = 10) | (hand[0] = 10 & hand[1] = 1)) {
+            let blackJack = 1;
+        }
+
+        return;
+    }
+
+    method void addCard() {
+        var int i;
+        var int newCardIndex;
+        let i = 0;
+
+        // Find the first empty slot in the hand array
+        while (i < 11) {
+            if (hand[i] = 0) {
+                let hand[i] = Random.randRange(12);
+                if (hand[i] > 10) {
+                    do fixRoyals();
+                }
+
+                let i = 11;
+            } else {
+                let i = i + 1;
+            }
+        }
+
+        return;
+    }
+
+    method int getScore() {
+        var int i;
+        let i = 0;
+
+        while (i < 11) {
+            let score = score + hand[i];
+            if (hand[i] = null) {
+               let i = i + 11;
+            }
+            let i = i + 1;
+        }
+
+        return score;
+     }
+
+    method void aceFix() {
+        var int i;
+        var int j;
+        let i = 0;
+        let j = 0;
+
+        // Convert Aces to 11 if score is less than 11
+        if (score < 11) {
+            while ((i < 11)) {
+                if (hand[i] = 1) {
+                    let hand[i] = 11;
+                    let aceIndexes[j] = i;
+                    let j = j + 1;
+                    let score = getScore();
+                }
+                let i = i + 1;
+            }
+        }
+
+        // Convert Aces back to 1 if score exceeds 21
+        let i = 0;
+        while (i < j) {
+            if (score > 21) {
+                let hand[aceIndexes[i]] = 1;
+                let score = getScore();
+            }
+            let i = i + 1;
+        }
+
+        return;
+    }
+}
+

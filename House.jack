@@ -1,0 +1,70 @@
+class House {
+    field Array hand;
+    field int score;
+    field int newCard;
+    field int handLength;
+    field int i, j;
+
+    constructor House new() {
+        do deal();
+
+        return this;
+     }
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+     }
+     
+     method Array getHand() {
+        return hand;
+     }
+
+     method void deal() {
+        let hand = Array.new(11);
+        do addCard();
+        return;
+     }
+
+     method void addCard() {
+        var int i;
+        let i = 0;
+
+        // Find the first empty slot in the hand array
+        while (i < 11) {
+            if (hand[i] = 0) {
+                let hand[i] = Random.randRange(12);
+                let i = 11; // Exit the loop
+            } else {
+                let i = i + 1;
+            }
+        }
+        return;
+     }
+
+     method void doTurn() {
+          do addCard();
+          do getScore();
+
+          while (score < 15) {
+               do addCard();
+               do getScore();
+          }
+
+          return;
+     }
+
+     method int getScore() {
+        while (i < 11) {
+            let score = score + hand[i];
+            if (hand[i] = null) {
+               let i = i + 11;
+            }
+            let i = i + 1;
+        }
+
+        let i = 0;
+        let j = 0;
+        return score;
+     }
+}

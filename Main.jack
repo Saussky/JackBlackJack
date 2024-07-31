@@ -1,0 +1,11 @@
+class Main {
+
+    function void main(){
+        var GameState gameState;
+
+        do Random.setSeed(12345);
+
+        let gameState = GameState.new();
+        return;
+    }
+}

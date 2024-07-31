@@ -1,0 +1,131 @@
+class GameState {
+    field Player player;
+    field House house;
+    field int playerBust;
+
+    constructor GameState new() {
+        let player = Player.new();
+        let house = House.new();
+
+        do startGame();
+
+        return this;
+    }
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        do player.dispose();
+        do house.dispose();
+
+        return;
+    }
+
+    method void startGame() {
+        var int blackJack;
+        var int response;
+        var int again;
+        var int playerScore;
+        var int houseScore;
+
+        do printHouseCards();
+        do printPlayerCards();
+
+        let blackJack = player.getBlackJack();
+        if (blackJack = 1) {
+            do Output.printString("Player got BlackJack!");
+            let again = Keyboard.readInt("Play again? 1 for yes, 0 for no");
+            if (again = 1) {
+                do startGame();
+            }
+        }
+ 
+        let response = Keyboard.readInt("1 to Hit, 0 to Stand: ");
+        while (response = 1) {
+            do playerInput();
+            let playerScore = player.getScore();
+            if (playerScore > 21) {
+                do Output.printString("Player Busts!");
+                let response = 0;
+            } else {
+                let response = Keyboard.readInt("1 to Hit, 0 to Stand: ");
+            }
+        }
+
+        do house.doTurn();
+        let houseScore = house.getScore();
+
+        do printHouseCards();
+
+
+        if ((houseScore = playerScore) | (houseScore > 21 & playerScore > 21)) {
+            do Output.printString("Draw!");
+        }
+        if ((houseScore < 22) & (houseScore > playerScore)) {
+            do Output.printString("House Score: ");
+            do Output.printInt(houseScore);
+
+            do Output.printString("Player Score: ");
+            do Output.printInt(playerScore);
+
+            do Output.printString("House Wins!");
+        }
+        if ((playerScore < 22) & (houseScore < playerScore)) {
+            do Output.printString("Player Wins!");
+        } 
+
+
+        return;
+    }
+    
+    method void playerInput() {
+        do player.addCard();
+        do printPlayerCards();
+
+        return;
+    }
+
+    method void printPlayerCards() {
+        var int i;
+        var Array playerHand;
+
+        let i = 0;
+        let playerHand = player.getHand();
+
+        do Output.printString("Your Cards Are: ");
+        while ((i < 11)) {
+            do Output.printInt(playerHand[i]);
+            do Output.printString(", ");
+
+            let i = i + 1;
+            if (playerHand[i] = 0) {
+                let i = 12;
+            }
+        }
+
+        do Output.printChar(128);
+        return;
+    }
+
+    method void printHouseCards() {
+        var int i;
+        var Array houseHand;
+
+        let i = 0;
+        let houseHand = house.getHand();
+
+        do Output.printString("Dealers Card Are: ");
+        while ((i < 11)) {
+            do Output.printInt(houseHand[i]);
+            do Output.printString(", ");
+            let i = i + 1;
+
+            if (houseHand[i] = 0) {
+                let i = 12;
+            }
+        }
+
+        do Output.printChar(128);
+        return;
+    }
+
+}
